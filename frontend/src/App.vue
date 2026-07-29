@@ -1,21 +1,31 @@
-<script setup></script>
+<script setup>
+import { ref } from 'vue'
+
+import PublicNavbar from '@/components/layout/PublicNavbar.vue'
+import PublicFooter from '@/components/layout/PublicFooter.vue'
+import DashboardNavbar from '@/components/layout/DashboardNavbar.vue'
+import DashboardFooter from '@/components/layout/DashboardFooter.vue'
+
+const isLoggedIn = ref(false)
+
+const login = () => {
+  isLoggedIn.value = true
+}
+
+const logout = () => {
+  isLoggedIn.value = false
+}
+</script>
 
 <template>
   <v-app>
     <v-main>
-      <v-container class="py-10">
-        <v-card max-width="500">
-          <v-card-title> Support Ticket System </v-card-title>
+      <PublicNavbar v-if="!isLoggedIn" @login="login" />
 
-          <v-card-text> Vuetify is working correctly. </v-card-text>
+      <DashboardNavbar v-else @logout="logout" />
+      <RouterView />
 
-          <v-card-actions>
-            <v-btn color="primary"> Create Ticket </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-container>
+      <PublicFooter />
     </v-main>
   </v-app>
 </template>
-
-<style scoped></style>

@@ -52,3 +52,50 @@ Run ESLint to check the code:
 ```sh
 npm run lint
 ```
+
+## Project Structure
+
+frontend/
+├── public/
+├── src/
+│ ├── assets/
+│ ├── components/
+│ ├── router/
+│ ├── stores/
+│ ├── views/
+│ ├── App.vue
+│ └── main.js
+├── package.json
+└── vite.config.js
+Backend
+
+#### This frontend application will be connected to a Spring Boot backend.
+
+src/
+├── components/
+│ ├── common/
+│ ├── dashboard/
+│ ├── knowledge-base/
+│ ├── layout/
+│ └── tickets/
+│
+├── views/
+│ ├── public/
+│ │ ├── HomeView.vue
+│ │ ├── PricingView.vue
+│ │ ├── ContactView.vue
+│ │ ├── LoginView.vue
+│ │ └── RegisterView.vue
+│ │
+│ └── dashboard/
+│ ├── DashboardView.vue
+│ ├── MyTicketsView.vue
+│ ├── CreateTicketView.vue
+│ ├── TicketDetailView.vue
+│ ├── KnowledgeBaseView.vue
+│ ├── AnnouncementsView.vue
+│ ├── ContactSupportView.vue
+│ └── ProfileView.vue
+│
+└── router/
+└── index.js
