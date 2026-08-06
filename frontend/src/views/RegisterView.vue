@@ -1,10 +1,9 @@
 <script setup>
 import { reactive, ref } from 'vue'
+import { useAuthStore } from '@/stores/authStore'
 
 const formRef = ref(null)
-const loading = ref(false)
-const successMessage = ref('')
-const errorMessage = ref('')
+const authStore = useAuthStore()
 
 const form = reactive({
   companyName: '',
@@ -59,10 +58,6 @@ const registerCompany = async () => {
     return
   }
 
-  loading.value = true
-  successMessage.value = ''
-  errorMessage.value = ''
-
   const registerData = {
     companyName: form.companyName.trim(),
     fullName: form.adminFullName.trim(),
@@ -70,8 +65,7 @@ const registerCompany = async () => {
     password: form.adminPassword,
   }
 
-  console.log(registerData)
-  console.log(loading)
+  await authStore.registerCompany(registerData)
 }
 </script>
 
