@@ -1,3 +1,80 @@
+<script setup>
+import { reactive, ref } from 'vue'
+
+const formRef = ref(null)
+const loading = ref(false)
+const successMessage = ref('')
+const errorMessage = ref('')
+
+const form = reactive({
+  companyName: '',
+  adminFullName: '',
+  adminEmail: '',
+  adminPassword: '',
+  adminConfirmPassword: '',
+  termsAccepted: false,
+})
+
+const requiredRule = (value) => {
+  return Boolean(value?.trim()) || 'This field is required.'
+}
+const emailRule = (value) => {
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  return emailPattern.test(value) || 'Enter a valid email address.'
+}
+
+const passwordRule = (value) => {
+  if (!value || value.length < 8) {
+    return 'Password must contain at least 8 characters.'
+  }
+
+  if (!/[A-Z]/.test(value)) {
+    return 'Password must contain at least one uppercase letter.'
+  }
+  if (!/[0-9]/.test(value)) {
+    return 'Password must contain at least one number.'
+  }
+  if (!/[a-z]/.test(value)) {
+    return 'Password must contain at least one lowercase letter.'
+  }
+  if (!/[!@#$%^&*(),.?":{}|<>]/.test(value)) {
+    return 'Password must contain at least one special character.'
+  }
+
+  return true
+}
+
+const confirmPasswordRule = (value) => {
+  return value === form.adminPassword || 'Passwords do not match.'
+}
+
+const termsRule = (value) => {
+  return value === true || 'You must accept the terms.'
+}
+
+const registerCompany = async () => {
+  const validationResult = await formRef.value.validate()
+
+  if (!validationResult) {
+    return
+  }
+
+  loading.value = true
+  successMessage.value = ''
+  errorMessage.value = ''
+
+  const registerData = {
+    companyName: form.companyName.trim(),
+    fullName: form.adminFullName.trim(),
+    email: form.adminEmail.trim(),
+    password: form.adminPassword,
+  }
+
+  console.log(registerData)
+  console.log(loading)
+}
+</script>
+
 <template>
   <v-container
     fluid
@@ -9,43 +86,25 @@
   >
     <v-row align="center" justify="center" class="py-6 py-md-10">
       <!-- Left side -->
+
       <v-col cols="12" md="5" lg="4">
         <v-card color="transparent" elevation="0" class="pa-4 pa-md-6">
-          <v-chip
-            color="indigo"
-            variant="tonal"
-            prepend-icon="mdi-account-plus-outline"
-            class="mb-5"
-          >
-            Create your workspace
+          <v-chip color="indigo" variant="tonal" prepend-icon="mdi-domain-plus" class="mb-5">
+            Create your company workspace
           </v-chip>
 
-          <h1 class="register-title text-indigo-darken-3 mb-5">
-            Start managing support tickets today
-          </h1>
+          <h1 class="register-title text-indigo-darken-3 mb-5">Build your support workspace</h1>
 
           <p class="text-body-1 text-blue-grey-darken-1 mb-7">
-            Create your company workspace, invite your team and manage customer support requests in
-            one place.
+            Register your company and create the first administrator account. After registration,
+            you can add offices, departments and invite your team.
           </p>
 
           <v-list bg-color="transparent" class="pa-0">
             <v-list-item class="px-0 mb-2">
               <template #prepend>
                 <v-avatar color="green-lighten-5" size="42" class="me-3">
-                  <v-icon color="green">mdi-check</v-icon>
-                </v-avatar>
-              </template>
-
-              <v-list-item-title class="font-weight-medium"> 14-day free trial </v-list-item-title>
-
-              <v-list-item-subtitle> No payment details required </v-list-item-subtitle>
-            </v-list-item>
-
-            <v-list-item class="px-0 mb-2">
-              <template #prepend>
-                <v-avatar color="blue-lighten-5" size="42" class="me-3">
-                  <v-icon color="blue">mdi-domain</v-icon>
+                  <v-icon color="green">mdi-domain</v-icon>
                 </v-avatar>
               </template>
 
@@ -53,84 +112,128 @@
                 Private company workspace
               </v-list-item-title>
 
-              <v-list-item-subtitle> Your company data remains separate </v-list-item-subtitle>
+              <v-list-item-subtitle>
+                Keep your company data separate and secure
+              </v-list-item-subtitle>
+            </v-list-item>
+
+            <v-list-item class="px-0 mb-2">
+              <template #prepend>
+                <v-avatar color="blue-lighten-5" size="42" class="me-3">
+                  <v-icon color="blue">mdi-account-key-outline</v-icon>
+                </v-avatar>
+              </template>
+
+              <v-list-item-title class="font-weight-medium">
+                First administrator account
+              </v-list-item-title>
+
+              <v-list-item-subtitle>
+                The first user will manage the company workspace
+              </v-list-item-subtitle>
             </v-list-item>
 
             <v-list-item class="px-0 mb-2">
               <template #prepend>
                 <v-avatar color="purple-lighten-5" size="42" class="me-3">
-                  <v-icon color="purple">mdi-account-group-outline</v-icon>
+                  <v-icon color="purple">mdi-account-multiple-plus-outline</v-icon>
                 </v-avatar>
               </template>
 
               <v-list-item-title class="font-weight-medium">
-                Invite your support team
+                Invite your employees
               </v-list-item-title>
 
-              <v-list-item-subtitle> Manage roles and permissions </v-list-item-subtitle>
+              <v-list-item-subtitle>
+                Add support managers, agents and employees later
+              </v-list-item-subtitle>
             </v-list-item>
 
             <v-list-item class="px-0">
               <template #prepend>
                 <v-avatar color="orange-lighten-5" size="42" class="me-3">
-                  <v-icon color="orange">mdi-shield-check-outline</v-icon>
+                  <v-icon color="orange">mdi-office-building-outline</v-icon>
                 </v-avatar>
               </template>
 
               <v-list-item-title class="font-weight-medium">
-                Secure and reliable
+                Organise your company
               </v-list-item-title>
 
-              <v-list-item-subtitle> Built for growing support teams </v-list-item-subtitle>
+              <v-list-item-subtitle>
+                Add offices and departments after registration
+              </v-list-item-subtitle>
             </v-list-item>
           </v-list>
         </v-card>
       </v-col>
 
-      <!-- Register card -->
+      <!-- Registration card -->
       <v-col cols="12" md="7" lg="5">
         <v-card color="white" elevation="2" class="pa-5 pa-sm-7 rounded-xl">
           <div class="text-center mb-7">
             <v-avatar color="indigo" size="58" rounded="lg" class="mb-4">
-              <v-icon color="white" size="32"> mdi-shield-check </v-icon>
+              <v-icon color="white" size="32">mdi-domain-plus</v-icon>
             </v-avatar>
 
             <v-card-title class="pa-0 text-h4 font-weight-bold text-indigo-darken-4 mb-2">
-              Create your account
+              Create your workspace
             </v-card-title>
 
             <v-card-subtitle class="pa-0 text-body-2 text-blue-grey-darken-1">
-              Set up your company workspace in a few simple steps.
+              Register your company and its first administrator.
             </v-card-subtitle>
           </div>
 
-          <v-form>
-            <v-text-field
-              label="Full name"
-              prepend-inner-icon="mdi-account-outline"
-              variant="outlined"
-              color="indigo"
-              class="mb-2"
-            />
+          <v-alert color="indigo" variant="tonal" icon="mdi-information-outline" class="mb-6">
+            The administrator account will be used to sign in and manage the company workspace.
+          </v-alert>
+
+          <v-form ref="formRef" @submit.prevent="registerCompany">
+            <p class="text-subtitle-1 font-weight-bold text-indigo-darken-3 mb-3">
+              Company details
+            </p>
 
             <v-text-field
+              v-model="form.companyName"
               label="Company name"
               prepend-inner-icon="mdi-domain"
               variant="outlined"
               color="indigo"
-              class="mb-2"
+              class="mb-3"
+              required
+              :rules="[requiredRule]"
+            />
+
+            <p class="text-subtitle-1 font-weight-bold text-indigo-darken-3 mb-3 mt-2">
+              Administrator details
+            </p>
+
+            <v-text-field
+              v-model="form.adminFullName"
+              label="Administrator full name"
+              prepend-inner-icon="mdi-account-outline"
+              variant="outlined"
+              color="indigo"
+              class="mb-3"
+              required
+              :rules="[requiredRule]"
             />
 
             <v-text-field
-              label="Work email address"
+              v-model="form.adminEmail"
+              label="Administrator work email"
               prepend-inner-icon="mdi-email-outline"
               variant="outlined"
               color="indigo"
               type="email"
-              class="mb-2"
+              class="mb-3"
+              required
+              :rules="[requiredRule, emailRule]"
             />
 
             <v-text-field
+              v-model="form.adminPassword"
               label="Password"
               prepend-inner-icon="mdi-lock-outline"
               append-inner-icon="mdi-eye-outline"
@@ -139,10 +242,13 @@
               type="password"
               hint="Use at least 8 characters."
               persistent-hint
-              class="mb-2"
+              class="mb-3"
+              required
+              :rules="[requiredRule, passwordRule]"
             />
 
             <v-text-field
+              v-model="form.adminConfirmPassword"
               label="Confirm password"
               prepend-inner-icon="mdi-lock-check-outline"
               append-inner-icon="mdi-eye-outline"
@@ -150,9 +256,17 @@
               color="indigo"
               type="password"
               class="mb-2"
+              required
+              :rules="[requiredRule, confirmPasswordRule]"
             />
 
-            <v-checkbox color="indigo" class="mb-4">
+            <v-checkbox
+              v-model="form.termsAccepted"
+              color="indigo"
+              class="mb-4"
+              required
+              :rules="[termsRule]"
+            >
               <template #label>
                 <span class="text-body-2">
                   I agree to the
@@ -169,8 +283,9 @@
               block
               class="text-none mb-5"
               append-icon="mdi-arrow-right"
+              type="submit"
             >
-              Create Account
+              Create Company Workspace
             </v-btn>
           </v-form>
 
@@ -209,12 +324,3 @@
     </v-row>
   </v-container>
 </template>
-
-<style scoped>
-.register-title {
-  font-size: clamp(2.4rem, 4.5vw, 4.5rem);
-  font-weight: 800;
-  line-height: 1.08;
-  letter-spacing: -2px;
-}
-</style>
