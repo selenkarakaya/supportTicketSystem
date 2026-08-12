@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 
 import com.ticketing.support.dto.CompanyRegistrationRequest;
 import com.ticketing.support.service.RegistrationService;
+import com.ticketing.support.dto.CompanyRegistrationResponse;
 
 @RestController
 @RequestMapping("/api/auth") //main route
@@ -19,8 +20,8 @@ public class AuthController{
     }
 
     @PostMapping("/register-company")
-    public void registerCompany(
+    public CompanyRegistrationResponse registerCompany(
         @Valid @RequestBody CompanyRegistrationRequest request) {
-            registrationService.registerCompany(request);
+          return  registrationService.registerCompany(request);
         }
 }

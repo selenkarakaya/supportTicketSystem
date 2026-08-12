@@ -10,6 +10,8 @@ import com.ticketing.support.repository.RoleRepository;
 import com.ticketing.support.dto.CompanyRegistrationRequest;
 import com.ticketing.support.entity.Company;
 import com.ticketing.support.entity.User;
+import com.ticketing.support.entity.Role;
+import com.ticketing.support.dto.CompanyRegistrationResponse;
 
 
 @Service
@@ -32,24 +34,26 @@ public class RegistrationService{
     }
 
     @Transactional
-    public void registerCompany(CompanyRegistrationRequest request) {
+    public CompanyRegistrationResponse registerCompany(CompanyRegistrationRequest request) {
 
-        if (userRepository.existsByEmail(request.getAdminEmail())) {
+        String email = request.getAdminEmail().trim().toLowerCase();
+
+        if (userRepository.existsByEmail(email)) {
             throw new IllegalArgumentException("Email is already registered.");
         }
 
         Company company = new Company();
         
         company.setName(request.getCompanyName());
-        company.setEmail(request.getAdminEmail());
+        company.setEmail(email);
 
-        companyRepository.save(company);
+        //companyRepository.save(company);
 
 
         User user = new User();
 
         user.setFullName(request.getAdminFullName());
-        user.setEmail(request.getAdminEmail());
+        user.setEmail(email);
         user.setCompany(company);
 
         Role adminRole = roleRepository
@@ -63,11 +67,8 @@ public class RegistrationService{
 
         user.setPasswordHash(hashedPassword);
 
-        userRepository.save(user);
+        //userRepository.save(user);
 
-        System.out.println("Company name: " + request.getCompanyName());
-        System.out.println("Admin full name: " + request.getAdminFullName());
-        System.out.println("Admin email: " + request.getAdminEmail());
-
+        return new CompanyRegistrationResponse("Company registered successfully");
     }
 }
