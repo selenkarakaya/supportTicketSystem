@@ -54,14 +54,14 @@ const termsRule = (value) => {
 const registerCompany = async () => {
   const validationResult = await formRef.value.validate()
 
-  if (!validationResult) {
+  if (!validationResult.valid) {
     return
   }
 
   const registerData = {
     companyName: form.companyName.trim(),
-    fullName: form.adminFullName.trim(),
-    email: form.adminEmail.trim(),
+    adminFullName: form.adminFullName.trim(),
+    adminEmail: form.adminEmail.trim().toLowerCase(),
     password: form.adminPassword,
   }
 
