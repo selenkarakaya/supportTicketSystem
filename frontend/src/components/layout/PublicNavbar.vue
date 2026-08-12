@@ -1,21 +1,6 @@
-<script setup>
-const emit = defineEmits(['login'])
-
-const handleLogin = () => {
-  emit('login')
-}
-</script>
+<script setup></script>
 
 <template>
-  <v-btn
-    variant="text"
-    color="indigo"
-    class="text-none font-weight-medium"
-    to="/dashboard"
-    @click="handleLogin"
-  >
-    I logged in
-  </v-btn>
   <v-app-bar color="white" elevation="0" class="border-b px-6" height="72">
     <div class="d-flex align-center ga-2 mb-3">
       <RouterLink :to="{ name: 'home' }" class="text-decoration-none">

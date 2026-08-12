@@ -1,8 +1,8 @@
 package com.ticketing.support.service;
 
 import org.springframework.stereotype.Service;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.ticketing.support.repository.CompanyRepository;
 import com.ticketing.support.repository.UserRepository;
@@ -14,6 +14,8 @@ import com.ticketing.support.entity.Role;
 import com.ticketing.support.dto.CompanyRegistrationResponse;
 
 
+
+
 @Service
 public class RegistrationService{
 
@@ -21,16 +23,19 @@ public class RegistrationService{
     private final CompanyRepository companyRepository;
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
-    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final PasswordEncoder passwordEncoder;
+ 
 
     public RegistrationService(
         CompanyRepository companyRepository,
         UserRepository userRepository,
-        RoleRepository roleRepository){
+        RoleRepository roleRepository,
+        PasswordEncoder passwordEncoder){
 
             this.companyRepository = companyRepository;
             this.userRepository = userRepository;
             this.roleRepository = roleRepository;
+            this.passwordEncoder = passwordEncoder;
     }
 
     @Transactional

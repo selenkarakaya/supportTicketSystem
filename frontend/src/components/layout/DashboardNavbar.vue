@@ -1,22 +1,9 @@
 <script setup>
-const emit = defineEmits(['logout'])
 
-const handleLogout = () => {
-  console.log('logout')
-  emit('logout')
-}
+
 </script>
 
 <template>
-  <v-btn
-    variant="text"
-    color="indigo"
-    class="text-none font-weight-medium"
-    to="/"
-    @click="handleLogout"
-  >
-    I logged out
-  </v-btn>
   <v-app-bar color="white" elevation="0" border="b" height="72" class="px-6">
     <!-- Logo -->
     <router-link to="/dashboard" class="d-flex align-center text-decoration-none mr-8">

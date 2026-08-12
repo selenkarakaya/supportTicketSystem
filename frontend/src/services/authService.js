@@ -9,3 +9,21 @@ export const registerCompanyRequest = async (registerData) => {
 
   return response
 }
+
+export const loginUserRequest = async (loginData) => {
+  const response = await fetch(`${AUTH_API_URL}/login-user`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify(loginData),
+  })
+
+  return response
+}
+
+export const getCurrentUserRequest = async () => {
+  return fetch(`${AUTH_API_URL}/me`, {
+    method: 'GET',
+    credentials: 'include',
+  })
+}

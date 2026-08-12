@@ -1,3 +1,43 @@
+<script setup>
+import { reactive, ref } from 'vue'
+import { useAuthStore } from '@/stores/authStore'
+import { useRouter } from 'vue-router'
+
+const formRef = ref(null)
+const authStore = useAuthStore()
+const router = useRouter()
+
+const form = reactive({
+  email: '',
+  password: '',
+  rememberMe: false,
+})
+
+const requiredRule = (value) => {
+  return Boolean(value?.trim()) || 'This field is required.'
+}
+
+const loginUser = async () => {
+  const validationResult = await formRef.value.validate()
+
+  if (!validationResult.valid) {
+    return
+  }
+
+  const loginData = {
+    email: form.email.trim().toLowerCase(),
+    password: form.password,
+  }
+
+  const success = await authStore.loginUser(loginData)
+
+  if (success) {
+    formRef.value.reset()
+    router.push({ name: 'dashboard' })
+  }
+}
+</script>
+
 <template>
   <v-container
     fluid
@@ -93,8 +133,9 @@
             </v-card-subtitle>
           </div>
 
-          <v-form>
+          <v-form ref="formRef" @submit.prevent="loginUser">
             <v-text-field
+              v-model="form.email"
               label="Email address"
               prepend-inner-icon="mdi-email-outline"
               variant="outlined"
@@ -102,9 +143,11 @@
               type="email"
               autocomplete="email"
               class="mb-2"
+              :rules="[requiredRule]"
             />
 
             <v-text-field
+              v-model="form.password"
               label="Password"
               prepend-inner-icon="mdi-lock-outline"
               append-inner-icon="mdi-eye-outline"
@@ -113,10 +156,17 @@
               type="password"
               autocomplete="current-password"
               class="mb-1"
+              :rules="[requiredRule]"
             />
 
             <div class="d-flex flex-column flex-sm-row align-sm-center justify-space-between mb-5">
-              <v-checkbox label="Remember me" color="indigo" density="compact" hide-details />
+              <v-checkbox
+                label="Remember me"
+                color="indigo"
+                density="compact"
+                hide-details
+                v-model="form.rememberMe"
+              />
 
               <v-btn variant="text" color="indigo" size="small" class="text-none px-0">
                 Forgot password?
@@ -129,6 +179,7 @@
               block
               class="text-none mb-5"
               append-icon="mdi-arrow-right"
+              type="submit"
             >
               Sign In
             </v-btn>

@@ -1,11 +1,13 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { useAuthStore } from '@/stores/authStore'
+
 import HomeView from '../views/HomeView.vue'
 import PricingView from '../views/PricingView.vue'
 import KnowledgeBaseView from '../views/KnowledgeBaseView.vue'
 import ContactView from '../views/ContactView.vue'
 import RegisterView from '../views/RegisterView.vue'
 import LoginView from '../views/LoginView.vue'
-
+import ProfileView from '../views/ProfileView.vue'
 import DashboardView from '../views/DashboardView.vue'
 
 import TicketsView from '../views/TicketsView.vue'
@@ -49,16 +51,29 @@ const router = createRouter({
       component: LoginView,
     },
     {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/AboutView.vue'),
+      path: '/profile',
+      name: 'profile',
+      component: ProfileView,
+      meta: {
+        requiresAuth: true,
+      },
     },
 
     { path: '/tickets', name: 'tickets', component: TicketsView },
   ],
 })
 
+router.beforeEach(async (to) => {
+  const authStore = useAuthStore()
+
+  if (to.meta.requiresAuth) {
+    const authenticated = await authStore.checkAuth()
+
+    if (!authenticated) {
+      return {
+        name: 'login',
+      }
+    }
+  }
+})
 export default router
