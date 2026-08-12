@@ -47,7 +47,7 @@ public class RegistrationService{
         company.setName(request.getCompanyName());
         company.setEmail(email);
 
-        //companyRepository.save(company);
+        companyRepository.save(company);
 
 
         User user = new User();
@@ -67,7 +67,7 @@ public class RegistrationService{
 
         user.setPasswordHash(hashedPassword);
 
-        //userRepository.save(user);
+        userRepository.save(user);
 
         return new CompanyRegistrationResponse("Company registered successfully");
     }

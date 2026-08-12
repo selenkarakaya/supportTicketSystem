@@ -20,13 +20,13 @@
           </p>
 
           <div class="d-flex ga-2">
-            <v-btn icon="mdi-linkedin" variant="outlined" size="small" color="indigo" href="#" />
+            <v-btn icon="mdi-linkedin" variant="outlined" size="small" color="indigo" />
 
-            <v-btn icon="mdi-twitter" variant="outlined" size="small" color="indigo" href="#" />
+            <v-btn icon="mdi-twitter" variant="outlined" size="small" color="indigo" />
 
-            <v-btn icon="mdi-facebook" variant="outlined" size="small" color="indigo" href="#" />
+            <v-btn icon="mdi-facebook" variant="outlined" size="small" color="indigo" />
 
-            <v-btn icon="mdi-web" variant="outlined" size="small" color="indigo" href="#" />
+            <v-btn icon="mdi-web" variant="outlined" size="small" color="indigo" />
           </div>
         </v-col>
 
@@ -36,8 +36,8 @@
           <v-list density="compact" bg-color="transparent" class="pa-0">
             <v-list-item title="Features" class="px-0" :to="{ name: 'home', hash: '#features' }" />
             <v-list-item title="Pricing" class="px-0" to="/pricing" />
-            <v-list-item title="Integrations" href="#" class="px-0" />
-            <v-list-item title="Status Page" href="#" class="px-0" />
+            <v-list-item title="Integrations" class="px-0" />
+            <v-list-item title="Status Page" class="px-0" />
           </v-list>
         </v-col>
 
@@ -45,10 +45,10 @@
           <h3 class="text-subtitle-2 font-weight-bold mb-3">Resources</h3>
 
           <v-list density="compact" bg-color="transparent" class="pa-0">
-            <v-list-item title="Knowledge Base" href="#" class="px-0" />
+            <v-list-item title="Knowledge Base" class="px-0" />
             <v-list-item title="Help Center" to="/contact" class="px-0" />
-            <v-list-item title="Guides" href="#" class="px-0" />
-            <v-list-item title="API Documentation" href="#" class="px-0" />
+            <v-list-item title="Guides" class="px-0" />
+            <v-list-item title="API Documentation" class="px-0" />
           </v-list>
         </v-col>
 
@@ -56,11 +56,11 @@
           <h3 class="text-subtitle-2 font-weight-bold mb-3">Company</h3>
 
           <v-list density="compact" bg-color="transparent" class="pa-0">
-            <v-list-item title="About Us" href="#" class="px-0" />
-            <v-list-item title="Blog" href="#" class="px-0" />
-            <v-list-item title="Careers" href="#" class="px-0" />
-            <v-list-item title="Privacy Policy" href="#" class="px-0" />
-            <v-list-item title="Terms of Service" href="#" class="px-0" />
+            <v-list-item title="About Us" class="px-0" />
+            <v-list-item title="Blog" class="px-0" />
+            <v-list-item title="Careers" class="px-0" />
+            <v-list-item title="Privacy Policy" class="px-0" />
+            <v-list-item title="Terms of Service" class="px-0" />
           </v-list>
         </v-col>
 

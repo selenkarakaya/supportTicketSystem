@@ -1,9 +1,15 @@
 <script setup>
 import { reactive, ref } from 'vue'
 import { useAuthStore } from '@/stores/authStore'
+import { useRouter } from 'vue-router'
 
 const formRef = ref(null)
 const authStore = useAuthStore()
+const router = useRouter()
+
+const snackbar = ref(false)
+const snackbarMessage = ref('')
+const snackbarColor = ref('success')
 
 const form = reactive({
   companyName: '',
@@ -65,11 +71,35 @@ const registerCompany = async () => {
     password: form.adminPassword,
   }
 
-  await authStore.registerCompany(registerData)
+  const success = await authStore.registerCompany(registerData)
+
+  if (success) {
+    snackbarMessage.value = authStore.successMessage
+    snackbarColor.value = 'success'
+    formRef.value.reset()
+    router.push('/login')
+  } else {
+    snackbarMessage.value = authStore.errorMessage
+    snackbarColor.value = 'error'
+  }
+
+  snackbar.value = true
 }
 </script>
 
 <template>
+  <v-snackbar
+    v-model="snackbar"
+    :timeout="4000"
+    location="top right"
+    :prepend-icon="snackbarColor === 'success' ? 'mdi-check-circle' : 'mdi-cancel'"
+    :color="snackbarColor"
+    rounded="pill"
+    variant="tonal"
+  >
+    {{ snackbarMessage }}
+  </v-snackbar>
+
   <v-container
     fluid
     class="pa-4 pa-md-6"

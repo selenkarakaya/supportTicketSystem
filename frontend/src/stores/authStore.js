@@ -15,12 +15,16 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       const response = await registerCompanyRequest(registerData)
       const data = await response.json()
-      console.log('status:', response.status)
-      console.log('ok:', response.ok)
-      console.log('data:', data)
-      console.log('selen')
+
+      if (!response.ok) {
+        errorMessage.value = data.message || 'Registration failed.'
+        return false
+      }
+
+      successMessage.value = data.message
+      return true
     } catch (error) {
-      console.error(error)
+      errorMessage.value = 'Something went wrong.'
     } finally {
       loading.value = false
     }
