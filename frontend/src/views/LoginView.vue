@@ -7,6 +7,10 @@ const formRef = ref(null)
 const authStore = useAuthStore()
 const router = useRouter()
 
+const snackbar = ref(false)
+const snackbarMessage = ref('')
+const snackbarColor = ref('success')
+
 const form = reactive({
   email: '',
   password: '',
@@ -32,13 +36,33 @@ const loginUser = async () => {
   const success = await authStore.loginUser(loginData)
 
   if (success) {
+    snackbarMessage.value = authStore.successMessage
+    snackbarColor.value = 'success'
+
     formRef.value.reset()
     router.push({ name: 'dashboard' })
+  } else {
+    snackbarMessage.value = authStore.errorMessage
+    snackbarColor.value = 'error'
   }
+
+  snackbar.value = true
 }
 </script>
 
 <template>
+  <v-snackbar
+    v-model="snackbar"
+    :timeout="4000"
+    location="top right"
+    :prepend-icon="snackbarColor === 'success' ? 'mdi-check-circle' : 'mdi-cancel'"
+    :color="snackbarColor"
+    rounded="pill"
+    variant="tonal"
+  >
+    {{ snackbarMessage }}
+  </v-snackbar>
+
   <v-container
     fluid
     class="pa-4 pa-md-6"

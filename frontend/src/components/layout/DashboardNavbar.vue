@@ -1,6 +1,40 @@
 <script setup>
+import { computed, onMounted } from 'vue'
+import { useAuthStore } from '@/stores/authStore'
+import { useRouter } from 'vue-router'
 
+const authStore = useAuthStore()
+const router = useRouter()
 
+onMounted(() => {
+  authStore.checkAuth()
+})
+const formattedUser = computed(() => {
+  const fullName = authStore.user?.fullName
+    .toLowerCase()
+    .split(' ')
+    .map((name) => name.charAt(0).toUpperCase() + name.slice(1))
+    .join(' ')
+
+  const role = authStore.user?.role
+    ? authStore.user.role
+        .toLowerCase()
+        .replaceAll('_', ' ')
+        .split(' ')
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ')
+    : ''
+
+  return { fullName, role }
+})
+
+const handleLogout = async () => {
+  const success = await authStore.logoutUser()
+
+  if (success) {
+    router.push('/')
+  }
+}
 </script>
 
 <template>
@@ -95,9 +129,11 @@
           </v-avatar>
 
           <div class="text-left ml-3">
-            <div class="text-body-2 font-weight-bold text-grey-darken-4">Sarah Johnson</div>
+            <div class="text-body-2 font-weight-bold text-grey-darken-4">
+              {{ formattedUser.fullName }}
+            </div>
 
-            <div class="text-caption text-grey-darken-1">Employee</div>
+            <div class="text-caption text-grey-darken-1">{{ formattedUser.role }}</div>
           </div>
 
           <v-icon icon="mdi-chevron-down" size="20" class="ml-2" />
@@ -122,7 +158,13 @@
 
           <v-divider class="my-2" />
 
-          <v-list-item prepend-icon="mdi-logout" title="Log Out" base-color="error" rounded="lg" />
+          <v-list-item
+            prepend-icon="mdi-logout"
+            title="Log Out"
+            base-color="error"
+            rounded="lg"
+            @click="handleLogout"
+          />
         </v-list>
       </v-card>
     </v-menu>

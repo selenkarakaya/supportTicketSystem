@@ -1,4 +1,16 @@
 <script setup>
+import { useAuthStore } from '@/stores/authStore'
+import { onMounted } from 'vue'
+
+const authStore = useAuthStore()
+onMounted(() => {
+  const firstName = authStore.user?.fullName?.split(' ')[0]
+  const formattedName = firstName
+    ? firstName.charAt(0).toUpperCase() + firstName.slice(1).toLowerCase()
+    : ''
+
+  return authStore.user
+})
 const ticketStats = [
   {
     title: 'Open Tickets',

@@ -20,7 +20,12 @@ export const loginUserRequest = async (loginData) => {
 
   return response
 }
-
+export const logoutUserRequest = async () => {
+  return fetch(`${AUTH_API_URL}/logout`, {
+    method: 'POST',
+    credentials: 'include',
+  })
+}
 export const getCurrentUserRequest = async () => {
   return fetch(`${AUTH_API_URL}/me`, {
     method: 'GET',

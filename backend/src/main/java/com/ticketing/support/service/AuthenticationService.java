@@ -10,7 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import com.ticketing.support.repository.UserRepository;
 import com.ticketing.support.dto.LoginRequest;
 import com.ticketing.support.entity.User;
-import com.ticketing.support.dto.LoginResponse;
+import com.ticketing.support.dto.AuthResponse;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -33,7 +33,7 @@ public class AuthenticationService{
     }
 
 
-    public LoginResponse loginUser(LoginRequest request, HttpServletRequest httpRequest,
+    public AuthResponse loginUser(LoginRequest request, HttpServletRequest httpRequest,
         HttpServletResponse httpResponse){
         String email = request.getEmail().trim().toLowerCase();
 
@@ -70,6 +70,46 @@ public class AuthenticationService{
             httpRequest,
             httpResponse);
         
-        return new LoginResponse("Login successful");
+            return new AuthResponse(
+                "Login successful",
+                existedUser.getId(),
+                existedUser.getFullName(),
+                existedUser.getEmail(),
+                existedUser.getRole().getName(),
+                existedUser.getCompany().getId(),
+                existedUser.getCompany().getName()
+        );
     }
+
+
+    public AuthResponse getCurrentUser(String email) {
+
+        User user = userRepository
+                .findByEmail(email)
+                .orElseThrow(() ->
+                        new IllegalArgumentException("User not found.")
+                );
+    
+        return new AuthResponse(
+                "Authenticated",
+                user.getId(),
+                user.getFullName(),
+                user.getEmail(),
+                user.getRole().getName(),
+                user.getCompany().getId(),
+                user.getCompany().getName()
+        );
+    }
+
+    public void logout(
+        HttpServletRequest request,
+        HttpServletResponse response
+) {
+
+    SecurityContextHolder.clearContext();
+
+    if (request.getSession(false) != null) {
+        request.getSession(false).invalidate();
+    }
+}
 }

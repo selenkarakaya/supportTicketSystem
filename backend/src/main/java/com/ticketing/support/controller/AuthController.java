@@ -13,7 +13,8 @@ import com.ticketing.support.dto.CompanyRegistrationResponse;
 
 import com.ticketing.support.service.AuthenticationService;
 import com.ticketing.support.dto.LoginRequest;
-import com.ticketing.support.dto.LoginResponse;
+import com.ticketing.support.dto.AuthResponse;
+import org.springframework.security.core.Authentication;
 
 import org.springframework.web.bind.annotation.GetMapping;
 
@@ -36,7 +37,7 @@ public class AuthController{
         }
 
     @PostMapping("/login-user")
-    public LoginResponse loginUser(
+    public AuthResponse loginUser(
             @Valid @RequestBody LoginRequest request,
             HttpServletRequest httpRequest,
             HttpServletResponse httpResponse) {
@@ -48,8 +49,15 @@ public class AuthController{
             );
         }
 
+        @PostMapping("/logout")
+        public void logout(
+                HttpServletRequest request,
+                HttpServletResponse response
+        ) {
+            authenticationService.logout(request, response);
+        }
     @GetMapping("/me")
-    public String getCurrentUser() {
-        return "Authenticated";
+    public AuthResponse getCurrentUser(Authentication authentication) {
+        return authenticationService.getCurrentUser(authentication.getName());
         }
 }

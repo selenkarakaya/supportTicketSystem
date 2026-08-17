@@ -33,9 +33,7 @@ public class User{
     @JoinColumn(name ="department_id")
     private Department department;
 
-    @ManyToOne
-    @JoinColumn(name ="office_id")
-    private Office office;
+   
 
     @Column(name = "full_name", nullable = false)
     private String fullName;
@@ -94,13 +92,6 @@ public class User{
         this.department = department;
     }
 
-    public Office getOffice(){
-        return office;
-    }
-
-    public void setOffice(Office office){
-        this.office = office;
-    }
 
     public String getFullName(){
         return fullName;

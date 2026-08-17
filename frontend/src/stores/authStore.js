@@ -4,6 +4,7 @@ import {
   registerCompanyRequest,
   loginUserRequest,
   getCurrentUserRequest,
+  logoutUserRequest,
 } from '@/services/authService'
 
 export const useAuthStore = defineStore('auth', () => {
@@ -11,6 +12,8 @@ export const useAuthStore = defineStore('auth', () => {
   const successMessage = ref('')
   const errorMessage = ref('')
   const isAuthenticated = ref(false)
+
+  const user = ref(null)
 
   const registerCompany = async (registerData) => {
     loading.value = true
@@ -61,16 +64,33 @@ export const useAuthStore = defineStore('auth', () => {
       loading.value = false
     }
   }
+  const logoutUser = async () => {
+    try {
+      const response = await logoutUserRequest()
 
+      if (!response.ok) {
+        return false
+      }
+
+      user.value = null
+      isAuthenticated.value = false
+
+      return true
+    } catch (error) {
+      return false
+    }
+  }
   const checkAuth = async () => {
     try {
       const response = await getCurrentUserRequest()
+      const data = await response.json()
 
       if (!response.ok) {
         isAuthenticated.value = false
         return false
       }
 
+      user.value = data
       isAuthenticated.value = true
       return true
     } catch (error) {
@@ -85,7 +105,9 @@ export const useAuthStore = defineStore('auth', () => {
     errorMessage,
     registerCompany,
     loginUser,
+    logoutUser,
     checkAuth,
     isAuthenticated,
+    user,
   }
 })

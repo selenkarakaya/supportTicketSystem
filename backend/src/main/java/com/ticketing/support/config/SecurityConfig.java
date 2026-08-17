@@ -8,6 +8,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import org.springframework.http.HttpMethod;
+
 @Configuration
 public class SecurityConfig {
 
@@ -18,9 +20,20 @@ public class SecurityConfig {
             .cors(cors -> {})
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
+
                 .requestMatchers(
                     "/api/auth/register-company",
-                    "/api/auth/login-user"
+                    "/api/auth/login-user",
+                    "/api/invitations/register"
+                ).permitAll()
+
+                .requestMatchers(
+                    HttpMethod.GET,
+                    "/api/invitations/validate"
+                ).permitAll()
+                .requestMatchers(
+                    HttpMethod.GET,
+                    "/api/departments/company/**"
                 ).permitAll()
                 .anyRequest().authenticated()
             );

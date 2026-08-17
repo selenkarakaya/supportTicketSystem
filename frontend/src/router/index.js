@@ -51,12 +51,23 @@ const router = createRouter({
       component: LoginView,
     },
     {
-      path: '/profile',
+      path: '/dashboard/profile',
       name: 'profile',
       component: ProfileView,
       meta: {
         requiresAuth: true,
       },
+    },
+    {
+      path: '/register-employee',
+      name: 'register-employee',
+      component: () => import('@/views/InvitedUserRegisterView.vue'),
+    },
+
+    {
+      path: '/register-support-agent/',
+      name: 'register-support-agent',
+      component: () => import('@/views/InvitedUserRegisterView.vue'),
     },
 
     { path: '/tickets', name: 'tickets', component: TicketsView },

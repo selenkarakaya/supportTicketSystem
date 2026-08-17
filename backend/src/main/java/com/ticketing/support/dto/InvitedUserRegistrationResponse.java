@@ -1,10 +1,10 @@
 package com.ticketing.support.dto;
 
-public class LoginResponse {
+public class InvitedUserRegistrationResponse {
 
     private String message;
 
-    public LoginResponse(String message) {
+    public InvitedUserRegistrationResponse(String message) {
         this.message = message;
     }
 
