@@ -216,16 +216,6 @@ const getPriorityColor = (priority) => {
           <v-btn color="indigo" size="large" prepend-icon="mdi-plus" class="text-none px-6">
             Create Ticket
           </v-btn>
-
-          <v-btn
-            color="indigo"
-            variant="outlined"
-            size="large"
-            prepend-icon="mdi-book-open-page-variant-outline"
-            class="text-none px-6"
-          >
-            Browse Knowledge Base
-          </v-btn>
         </v-col>
       </v-row>
     </v-card>
@@ -474,53 +464,5 @@ const getPriorityColor = (priority) => {
         </v-card>
       </v-col>
     </v-row>
-
-    <!-- Recommended articles -->
-    <v-card color="white" elevation="1" class="pa-5 rounded-xl">
-      <div class="d-flex align-center justify-space-between mb-4">
-        <h2 class="text-h6 font-weight-bold">Recommended Knowledge Base Articles</h2>
-
-        <v-btn
-          color="indigo"
-          variant="text"
-          append-icon="mdi-arrow-right"
-          class="text-none d-none d-sm-flex"
-        >
-          Browse all articles
-        </v-btn>
-      </div>
-
-      <v-row>
-        <v-col v-for="article in articles" :key="article.title" cols="12" md="4">
-          <v-card variant="outlined" class="pa-4 rounded-lg h-100">
-            <div class="d-flex align-start ga-4">
-              <v-avatar color="blue-lighten-5" size="58" rounded="lg">
-                <v-icon color="indigo" size="30">
-                  {{ article.icon }}
-                </v-icon>
-              </v-avatar>
-
-              <div class="flex-grow-1">
-                <p class="font-weight-bold mb-1">
-                  {{ article.title }}
-                </p>
-
-                <p class="text-body-2 text-blue-grey-darken-1 mb-3">
-                  {{ article.description }}
-                </p>
-
-                <div class="d-flex align-center justify-space-between">
-                  <v-chip color="indigo" variant="tonal" size="x-small">
-                    {{ article.category }}
-                  </v-chip>
-
-                  <v-icon size="small"> mdi-arrow-right </v-icon>
-                </div>
-              </div>
-            </div>
-          </v-card>
-        </v-col>
-      </v-row>
-    </v-card>
   </v-container>
 </template>

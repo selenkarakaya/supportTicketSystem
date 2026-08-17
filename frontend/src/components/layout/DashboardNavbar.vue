@@ -68,16 +68,6 @@ const handleLogout = async () => {
     </v-btn>
 
     <v-btn
-      to="/dashboard/knowledge-base"
-      variant="text"
-      color="grey-darken-4"
-      prepend-icon="mdi-book-open-outline"
-      class="text-none font-weight-medium mx-1"
-    >
-      Knowledge Base
-    </v-btn>
-
-    <v-btn
       to="/dashboard/announcements"
       variant="text"
       color="grey-darken-4"

@@ -3,12 +3,12 @@ import { useAuthStore } from '@/stores/authStore'
 
 import HomeView from '../views/HomeView.vue'
 import PricingView from '../views/PricingView.vue'
-import KnowledgeBaseView from '../views/KnowledgeBaseView.vue'
 import ContactView from '../views/ContactView.vue'
 import RegisterView from '../views/RegisterView.vue'
 import LoginView from '../views/LoginView.vue'
 import ProfileView from '../views/ProfileView.vue'
 import DashboardView from '../views/DashboardView.vue'
+import EmployeeManagementView from '../views/EmployeeManagementView.vue'
 
 import TicketsView from '../views/TicketsView.vue'
 
@@ -30,11 +30,7 @@ const router = createRouter({
       name: 'pricing',
       component: PricingView,
     },
-    {
-      path: '/knowledge-base',
-      name: 'knowledge-base',
-      component: KnowledgeBaseView,
-    },
+
     {
       path: '/contact',
       name: 'contact',
@@ -68,6 +64,12 @@ const router = createRouter({
       path: '/register-support-agent/',
       name: 'register-support-agent',
       component: () => import('@/views/InvitedUserRegisterView.vue'),
+    },
+
+    {
+      path: '/employees',
+      name: 'employees',
+      component: EmployeeManagementView,
     },
 
     { path: '/tickets', name: 'tickets', component: TicketsView },

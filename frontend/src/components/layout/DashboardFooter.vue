@@ -45,7 +45,6 @@
           <h3 class="text-subtitle-2 font-weight-bold mb-3">Resources</h3>
 
           <v-list density="compact" bg-color="transparent" class="pa-0">
-            <v-list-item title="Knowledge Base" class="px-0" />
             <v-list-item title="Help Center" to="/contact" class="px-0" />
             <v-list-item title="Guides" class="px-0" />
             <v-list-item title="API Documentation" class="px-0" />

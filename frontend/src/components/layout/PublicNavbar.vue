@@ -21,10 +21,6 @@
         Home
       </v-btn>
 
-      <v-btn variant="text" class="text-none font-weight-medium" to="/knowledge-base">
-        Knowledge Base
-      </v-btn>
-
       <v-btn variant="text" class="text-none font-weight-medium" to="/pricing"> Pricing </v-btn>
       <v-btn variant="text" class="text-none font-weight-medium" to="/contact"> Contact </v-btn>
     </div>

@@ -335,6 +335,7 @@ const registerCompany = async () => {
             Already have an account?
 
             <v-btn
+              :to="{ name: 'login' }"
               variant="text"
               color="indigo"
               size="small"

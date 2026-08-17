@@ -158,6 +158,11 @@ const copyInvitationLink = async () => {
           >
             Invite Support Agent
           </v-btn>
+          <v-list-item
+            :to="{ name: 'employees' }"
+            prepend-icon="mdi-account-group-outline"
+            title="Employees"
+          />
         </div>
       </template>
     </v-card>

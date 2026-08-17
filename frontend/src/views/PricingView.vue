@@ -12,7 +12,6 @@ const plans = [
       '100 tickets per month',
       'Basic ticket management',
       'Email notifications',
-      'Knowledge base access',
     ],
   },
   {

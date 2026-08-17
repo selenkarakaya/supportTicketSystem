@@ -131,34 +131,9 @@ const testimonials = [
     role: 'IT Support Lead, CloudWorks',
   },
 ]
-
-const testBackend = async () => {
-  try {
-    const response = await fetch('http://localhost:8080/api/test')
-    console.log(response)
-    if (!response.ok) {
-      throw new Error(`HTTP error: ${response.status}`)
-    }
-
-    const data = await response.text()
-    console.log(data)
-  } catch (e) {
-    console.log(e)
-    console.log('backend error')
-  }
-}
 </script>
 
 <template>
-  <v-btn
-    color="indigo"
-    size="large"
-    append-icon="mdi-arrow-right"
-    class="text-none px-6"
-    @click="testBackend"
-  >
-    denemes
-  </v-btn>
   <v-container
     fluid
     class="pa-4 pa-md-6"
