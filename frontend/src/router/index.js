@@ -9,6 +9,7 @@ import LoginView from '../views/LoginView.vue'
 import ProfileView from '../views/ProfileView.vue'
 import DashboardView from '../views/DashboardView.vue'
 import EmployeeManagementView from '../views/EmployeeManagementView.vue'
+impoer
 
 import TicketsView from '../views/TicketsView.vue'
 

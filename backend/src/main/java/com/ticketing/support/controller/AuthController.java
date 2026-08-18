@@ -34,7 +34,7 @@ public class AuthController{
     public CompanyRegistrationResponse registerCompany(
         @Valid @RequestBody CompanyRegistrationRequest request) {
           return  registrationService.registerCompany(request);
-        }
+    }
 
     @PostMapping("/login-user")
     public AuthResponse loginUser(
@@ -49,13 +49,13 @@ public class AuthController{
             );
         }
 
-        @PostMapping("/logout")
-        public void logout(
-                HttpServletRequest request,
-                HttpServletResponse response
-        ) {
+    @PostMapping("/logout")
+    public void logout(
+            HttpServletRequest request,
+            HttpServletResponse response) {
             authenticationService.logout(request, response);
         }
+
     @GetMapping("/me")
     public AuthResponse getCurrentUser(Authentication authentication) {
         return authenticationService.getCurrentUser(authentication.getName());
