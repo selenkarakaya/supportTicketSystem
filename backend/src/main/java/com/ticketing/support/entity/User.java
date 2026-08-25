@@ -33,7 +33,6 @@ public class User{
     @JoinColumn(name ="department_id")
     private Department department;
 
-   
 
     @Column(name = "full_name", nullable = false)
     private String fullName;

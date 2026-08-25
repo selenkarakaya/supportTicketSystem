@@ -77,8 +77,14 @@ public class AuthenticationService{
                 existedUser.getEmail(),
                 existedUser.getRole().getName(),
                 existedUser.getCompany().getId(),
-                existedUser.getCompany().getName()
-        );
+                existedUser.getCompany().getName(),
+                existedUser.getDepartment() != null
+                    ? existedUser.getDepartment().getId()
+                    : null,
+                existedUser.getDepartment() != null
+                    ? existedUser.getDepartment().getName()
+                    : null
+            );
     }
 
 
@@ -90,15 +96,21 @@ public class AuthenticationService{
                         new IllegalArgumentException("User not found.")
                 );
     
-        return new AuthResponse(
-                "Authenticated",
-                user.getId(),
-                user.getFullName(),
-                user.getEmail(),
-                user.getRole().getName(),
-                user.getCompany().getId(),
-                user.getCompany().getName()
-        );
+                return new AuthResponse(
+                    "Authenticated",
+                    user.getId(),
+                    user.getFullName(),
+                    user.getEmail(),
+                    user.getRole().getName(),
+                    user.getCompany().getId(),
+                    user.getCompany().getName(),
+                    user.getDepartment() != null
+                        ? user.getDepartment().getId()
+                        : null,
+                    user.getDepartment() != null
+                        ? user.getDepartment().getName()
+                        : null
+                );
     }
 
     public void logout(

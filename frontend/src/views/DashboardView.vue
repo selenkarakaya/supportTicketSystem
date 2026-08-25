@@ -213,7 +213,13 @@ const getPriorityColor = (priority) => {
         </v-col>
 
         <v-col cols="12" md="5" class="d-flex flex-column flex-sm-row justify-md-end ga-3">
-          <v-btn color="indigo" size="large" prepend-icon="mdi-plus" class="text-none px-6">
+          <v-btn
+            color="indigo"
+            size="large"
+            prepend-icon="mdi-plus"
+            class="text-none px-6"
+            :to="{ name: 'create-ticket' }"
+          >
             Create Ticket
           </v-btn>
         </v-col>

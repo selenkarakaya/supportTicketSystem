@@ -9,25 +9,33 @@ public class AuthResponse {
     private String role;
     private Long companyId;
     private String companyName;
+    private Long departmentId;
+    private String departmentName;
 
     public AuthResponse(
-            String message,
-            Long id,
-            String fullName,
-            String email,
-            String role,
-            Long companyId,
-            String companyName
-    ) {
-        this.message = message;
-        this.id = id;
-        this.fullName = fullName;
-        this.email = email;
-        this.role = role;
-        this.companyId = companyId;
-        this.companyName = companyName;
-    }
+        String message,
+        Long id,
+        String fullName,
+        String email,
+        String role,
+        Long companyId,
+        String companyName,
+        Long departmentId,
+        String departmentName
+) {
+    this.message = message;
+    this.id = id;
+    this.fullName = fullName;
+    this.email = email;
+    this.role = role;
+    this.companyId = companyId;
+    this.companyName = companyName;
+    this.departmentId = departmentId;
+    this.departmentName = departmentName;
+}
 
+    
+    
     public String getMessage() {
         return message;
     }
@@ -54,5 +62,13 @@ public class AuthResponse {
 
     public String getCompanyName() {
         return companyName;
+    }
+
+    public Long getDepartmentId() {
+        return departmentId;
+    }
+    
+    public String getDepartmentName() {
+        return departmentName;
     }
 }
