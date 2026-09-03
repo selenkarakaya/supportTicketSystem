@@ -1,7 +1,6 @@
 package com.ticketing.support.repository;
 
 import com.ticketing.support.entity.User;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -14,4 +13,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsByEmail(String email);
 
     List<User> findByCompanyId(Long companyId);
+
+    List<User> findByCompanyIdAndDepartmentIdAndIsActiveTrue(
+            Long companyId,
+            Long departmentId
+    );
 }

@@ -9,6 +9,5 @@ import java.util.List;
 
 public interface TicketCategoryRepository extends JpaRepository<TicketCategory, Integer>{
 
-    List<TicketCategory> findByIsActiveTrue();
 
 }

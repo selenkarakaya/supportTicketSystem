@@ -5,8 +5,11 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import lombok.Getter;
-import lombok.Setter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -23,8 +26,11 @@ public class CreateTicketRequest {
     @NotNull
     private Integer priorityId;
 
+    @NotNull
+    private Integer categoryId;
+
     private Long departmentId;
 
     @NotNull
-    private Integer categoryId;
+    private List<Long> assignedUserIds = new ArrayList<>();
 }

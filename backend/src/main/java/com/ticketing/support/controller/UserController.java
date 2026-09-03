@@ -20,10 +20,21 @@ public class UserController {
 
     @GetMapping
     public List<UserResponse> getCompanyUsers(
-        Authentication authentication
+            Authentication authentication
     ) {
         return userService.getCompanyUsers(
-            authentication.getName()
+                authentication.getName()
+        );
+    }
+
+    @GetMapping("/department/{departmentId}")
+    public List<UserResponse> getUsersByDepartment(
+            Authentication authentication,
+            @PathVariable Long departmentId
+    ) {
+        return userService.getUsersByDepartment(
+                authentication.getName(),
+                departmentId
         );
     }
 }

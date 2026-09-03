@@ -58,7 +58,7 @@ const handleLogout = async () => {
     </v-btn>
 
     <v-btn
-      to="/dashboard/tickets"
+      :to="{ name: 'my-tickets' }"
       variant="text"
       color="grey-darken-4"
       prepend-icon="mdi-bell-outline"
@@ -78,7 +78,7 @@ const handleLogout = async () => {
     </v-btn>
 
     <v-btn
-      to="/dashboard/contact"
+      :to="{ name: 'contact' }"
       variant="text"
       color="grey-darken-4"
       prepend-icon="mdi-message-outline"

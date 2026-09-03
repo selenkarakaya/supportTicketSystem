@@ -7,3 +7,11 @@ export const getCompanyUsersRequest = async () => {
     credentials: 'include',
   })
 }
+
+// Get users belonging to a department
+export const getUsersByDepartmentRequest = (departmentId) => {
+  return fetch(`${USER_API_URL}/department/${departmentId}`, {
+    method: 'GET',
+    credentials: 'include',
+  })
+}

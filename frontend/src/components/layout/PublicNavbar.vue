@@ -17,12 +17,17 @@
     <v-spacer />
 
     <div class="d-none d-md-flex align-center ga-2">
-      <v-btn variant="text" color="indigo" class="text-none font-weight-medium" to="/">
+      <v-btn :to="{ name: 'home' }" variant="text" class="text-none font-weight-medium">
         Home
       </v-btn>
 
-      <v-btn variant="text" class="text-none font-weight-medium" to="/pricing"> Pricing </v-btn>
-      <v-btn variant="text" class="text-none font-weight-medium" to="/contact"> Contact </v-btn>
+      <v-btn :to="{ name: 'pricing' }" variant="text" class="text-none font-weight-medium">
+        Pricing
+      </v-btn>
+
+      <v-btn :to="{ name: 'contact' }" variant="text" class="text-none font-weight-medium">
+        Contact
+      </v-btn>
     </div>
 
     <v-spacer />

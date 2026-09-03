@@ -1,13 +1,19 @@
 <script setup>
-import { reactive, ref, onMounted, computed } from 'vue'
+import { reactive, ref, onMounted, computed, watch } from 'vue'
+import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
 import { useDepartmentStore } from '@/stores/departmentStore'
 import { useTicketCategoryStore } from '@/stores/ticketCategoryStore'
-import { useRouter } from 'vue-router'
+import { useTicketPriorityStore } from '@/stores/ticketPriorityStore'
+import { useUserStore } from '@/stores/userStore'
+import { useTicketStore } from '@/stores/ticketStore'
 
 const authStore = useAuthStore()
 const departmentStore = useDepartmentStore()
 const ticketCategoryStore = useTicketCategoryStore()
+const ticketPriorityStore = useTicketPriorityStore()
+const userStore = useUserStore()
+const ticketStore = useTicketStore()
 const formRef = ref(null)
 
 const snackbar = ref(false)
@@ -23,7 +29,7 @@ onMounted(async () => {
 
   await departmentStore.getDepartmentsByCompany(authStore.user.companyId)
   await ticketCategoryStore.getTicketCategories()
-  console.log('Departments:', JSON.stringify(ticketCategoryStore.categories, null, 2))
+  await ticketPriorityStore.getTicketPriorities()
 })
 
 const currentUser = computed(() => {
@@ -57,33 +63,91 @@ const subjectLengthRule = (value) => {
 const requiredSelectRule = (value) => {
   return (value !== null && value !== undefined && value !== '') || 'Please select an option.'
 }
+
+const departmentOptions = computed(() => [
+  {
+    id: 'everyone',
+    name: 'Everyone',
+  },
+  ...departmentStore.departments,
+])
+
 const form = reactive({
   subject: '',
   description: '',
   priorityId: null,
   categoryId: null,
   departmentId: null,
+  assignedUserIds: [],
 })
 
+watch(
+  () => form.departmentId,
+  async (departmentId) => {
+    form.assignedUserIds = []
+    userStore.departmentUsers = []
+
+    if (!departmentId || departmentId === 'everyone') {
+      return
+    }
+
+    await userStore.getUsersByDepartment(departmentId)
+  },
+)
+
+const ticketData = {
+  subject: form.subject.trim(),
+  description: form.description.trim(),
+  priorityId: form.priorityId,
+  categoryId: form.categoryId,
+  departmentId: form.departmentId === 'everyone' ? null : form.departmentId,
+  assignedUserIds: form.departmentId === 'everyone' ? [] : form.assignedUserIds,
+}
 const createTicket = async () => {
   const validationResult = await formRef.value.validate()
 
   if (!validationResult.valid) {
     return
   }
+
   const ticketData = {
     subject: form.subject.trim(),
     description: form.description.trim(),
     priorityId: form.priorityId,
     categoryId: form.categoryId,
-    departmentId: form.departmentId,
+    departmentId: form.departmentId === 'everyone' ? null : form.departmentId,
+    assignedUserIds: form.departmentId === 'everyone' ? [] : form.assignedUserIds,
   }
 
-  console.log(ticketData)
+  const success = await ticketStore.createTicket(ticketData)
+
+  if (success) {
+    snackbarMessage.value = ticketStore.successMessage
+    snackbarColor.value = 'success'
+
+    Object.assign(form, {
+      subject: '',
+      description: '',
+      priorityId: null,
+      categoryId: null,
+      departmentId: null,
+      assignedUserIds: [],
+    })
+
+    formRef.value.resetValidation()
+  } else {
+    snackbarMessage.value = ticketStore.errorMessage
+    snackbarColor.value = 'error'
+  }
+
+  snackbar.value = true
 }
 </script>
 <template>
   <v-container class="py-8">
+    <v-snackbar v-model="snackbar" :color="snackbarColor" location="top right" timeout="4000">
+      {{ snackbarMessage }}
+    </v-snackbar>
     <v-row justify="center">
       <v-col cols="12" md="11" lg="10" xl="9">
         <v-card border elevation="0" rounded="xl">
@@ -185,9 +249,14 @@ const createTicket = async () => {
                 <v-col cols="12" md="6">
                   <v-select
                     v-model="form.priorityId"
+                    :items="ticketPriorityStore.priorities"
+                    :loading="ticketPriorityStore.loading"
                     :rules="[requiredSelectRule]"
+                    item-value="id"
+                    item-title="label"
                     color="indigo"
                     label="Priority"
+                    no-data-text="No priorities available"
                     placeholder="Select a priority"
                     prepend-inner-icon="mdi-flag-outline"
                     variant="outlined"
@@ -197,28 +266,46 @@ const createTicket = async () => {
                 <v-col cols="12" md="6">
                   <v-select
                     v-model="form.departmentId"
-                    :items="departmentStore.departments"
+                    :items="departmentOptions"
                     :loading="departmentStore.loading"
-                    clearable
+                    :rules="[requiredSelectRule]"
                     color="indigo"
                     item-title="name"
                     item-value="id"
-                    label="Department (optional)"
+                    label="Department"
                     no-data-text="No departments available"
-                    placeholder="Select a department"
+                    placeholder="Select a department or everyone"
                     prepend-inner-icon="mdi-domain"
                     variant="outlined"
                   />
                 </v-col>
 
                 <v-col cols="12" md="6">
+                  <v-text-field
+                    v-if="form.departmentId === 'everyone'"
+                    model-value="Everyone"
+                    color="indigo"
+                    label="Assign To"
+                    prepend-inner-icon="mdi-account-multiple-check-outline"
+                    readonly
+                    variant="outlined"
+                  />
+
                   <v-select
+                    v-else
+                    v-model="form.assignedUserIds"
+                    :disabled="!form.departmentId"
+                    :items="userStore.departmentUsers"
+                    :loading="userStore.loading"
                     chips
                     clearable
                     closable-chips
                     color="indigo"
+                    item-title="fullName"
+                    item-value="id"
                     label="Assign To (optional)"
                     multiple
+                    no-data-text="No active users in this department"
                     placeholder="Select team members"
                     prepend-inner-icon="mdi-account-multiple-plus-outline"
                     variant="outlined"
@@ -248,6 +335,8 @@ const createTicket = async () => {
             <v-btn color="grey-darken-1" prepend-icon="mdi-close" variant="text"> Cancel </v-btn>
 
             <v-btn
+              :disabled="ticketStore.loading"
+              :loading="ticketStore.loading"
               color="indigo"
               prepend-icon="mdi-send-outline"
               size="large"

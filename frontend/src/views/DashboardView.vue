@@ -1,193 +1,119 @@
 <script setup>
 import { useAuthStore } from '@/stores/authStore'
-import { onMounted } from 'vue'
+import { useTicketStore } from '@/stores/ticketStore'
+import { computed, onMounted } from 'vue'
 
 const authStore = useAuthStore()
-onMounted(() => {
-  const firstName = authStore.user?.fullName?.split(' ')[0]
-  const formattedName = firstName
-    ? firstName.charAt(0).toUpperCase() + firstName.slice(1).toLowerCase()
-    : ''
+const ticketStore = useTicketStore()
 
-  return authStore.user
+const firstName = computed(() => {
+  const name = authStore.user?.fullName?.split(' ')[0]
+
+  return name ? name.charAt(0).toUpperCase() + name.slice(1).toLowerCase() : ''
 })
-const ticketStats = [
+
+const recentTickets = computed(() => {
+  return ticketStore.tickets.slice(0, 5)
+})
+
+onMounted(async () => {
+  if (!authStore.user) {
+    const authenticated = await authStore.checkAuth()
+
+    if (!authenticated) {
+      return
+    }
+  }
+
+  await ticketStore.getTickets()
+})
+
+const getStatusColor = (status) => {
+  const colors = {
+    open: 'blue',
+    'in progress': 'orange',
+    pending: 'purple',
+    resolved: 'green',
+    closed: 'grey',
+  }
+
+  return colors[status?.toLowerCase().replaceAll('_', ' ')] || 'grey'
+}
+
+const getPriorityColor = (priority) => {
+  const colors = {
+    urgent: 'red-darken-2',
+    high: 'red',
+    medium: 'orange',
+    low: 'green',
+  }
+
+  return colors[priority?.toLowerCase()] || 'grey'
+}
+
+const formatDate = (date) => {
+  if (!date) {
+    return '-'
+  }
+
+  return new Intl.DateTimeFormat('en-GB', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  }).format(new Date(date))
+}
+
+const normalizeStatus = (status) => {
+  return status?.trim().toLowerCase().replaceAll('_', ' ')
+}
+
+const countTicketsByStatus = (...statuses) => {
+  const normalizedStatuses = statuses.map(normalizeStatus)
+  const tickets = ticketStore.tickets ?? []
+
+  return tickets.filter((ticket) => {
+    const ticketStatus = normalizeStatus(ticket.statusLabel)
+
+    return normalizedStatuses.includes(ticketStatus)
+  }).length
+}
+
+const ticketStats = computed(() => [
   {
     title: 'Open Tickets',
-    value: 7,
-    change: '2 from last week',
+    value: countTicketsByStatus('open'),
+    description: 'Currently open',
     icon: 'mdi-file-document-outline',
     color: 'blue',
     background: 'blue-lighten-5',
   },
   {
     title: 'In Progress',
-    value: 3,
-    change: '1 from last week',
+    value: countTicketsByStatus('in progress'),
+    description: 'Currently being handled',
     icon: 'mdi-progress-clock',
     color: 'orange',
     background: 'orange-lighten-5',
   },
   {
     title: 'Resolved',
-    value: 24,
-    change: '6 from last week',
+    value: countTicketsByStatus('resolved'),
+    description: 'Successfully resolved',
     icon: 'mdi-check-circle-outline',
     color: 'green',
     background: 'green-lighten-5',
   },
   {
-    title: 'Pending Response',
-    value: 5,
-    change: '1 from last week',
+    title: 'Pending',
+    value: countTicketsByStatus('pending', 'pending response'),
+    description: 'Waiting for response',
     icon: 'mdi-message-outline',
     color: 'purple',
     background: 'purple-lighten-5',
   },
-]
-
-const recentTickets = [
-  {
-    id: 'TS-10452',
-    subject: 'Unable to access VPN',
-    status: 'Open',
-    priority: 'High',
-    assignedTo: 'IT Support',
-    updatedAt: 'May 15, 2026 10:24 AM',
-  },
-  {
-    id: 'TS-10431',
-    subject: 'Error in payroll portal',
-    status: 'In Progress',
-    priority: 'Medium',
-    assignedTo: 'Payroll Team',
-    updatedAt: 'May 14, 2026 02:15 PM',
-  },
-  {
-    id: 'TS-10418',
-    subject: 'Request for software access',
-    status: 'Pending Response',
-    priority: 'Low',
-    assignedTo: 'IT Support',
-    updatedAt: 'May 13, 2026 11:03 AM',
-  },
-  {
-    id: 'TS-10392',
-    subject: 'Printer not working',
-    status: 'Resolved',
-    priority: 'Medium',
-    assignedTo: 'Facilities Team',
-    updatedAt: 'May 10, 2026 04:45 PM',
-  },
-  {
-    id: 'TS-10371',
-    subject: 'Email not syncing on mobile',
-    status: 'Resolved',
-    priority: 'Low',
-    assignedTo: 'IT Support',
-    updatedAt: 'May 9, 2026 09:30 AM',
-  },
-]
-
-const recentActivities = [
-  {
-    title: 'New comment on TS-10452',
-    description: 'IT Support added a comment',
-    time: '10 minutes ago',
-    icon: 'mdi-message-outline',
-    color: 'blue',
-    background: 'blue-lighten-5',
-  },
-  {
-    title: 'Status updated on TS-10431',
-    description: 'Payroll Team changed status to In Progress',
-    time: '1 hour ago',
-    icon: 'mdi-progress-clock',
-    color: 'orange',
-    background: 'orange-lighten-5',
-  },
-  {
-    title: 'Ticket resolved: TS-10392',
-    description: 'Facilities Team marked the ticket as Resolved',
-    time: '2 days ago',
-    icon: 'mdi-check-circle-outline',
-    color: 'green',
-    background: 'green-lighten-5',
-  },
-  {
-    title: 'Attachment added to TS-10418',
-    description: 'IT Support uploaded an attachment',
-    time: '2 days ago',
-    icon: 'mdi-paperclip',
-    color: 'purple',
-    background: 'purple-lighten-5',
-  },
-]
-
-const quickActions = [
-  {
-    title: 'Create a Ticket',
-    description: 'Submit a new request or report an issue.',
-    icon: 'mdi-plus',
-  },
-  {
-    title: 'View My Tickets',
-    description: 'View and track all your submitted tickets.',
-    icon: 'mdi-file-document-outline',
-  },
-  {
-    title: 'Upload Attachment',
-    description: 'Upload files to add to an existing ticket.',
-    icon: 'mdi-paperclip',
-  },
-  {
-    title: 'Contact Support',
-    description: 'Get help from our support team.',
-    icon: 'mdi-headset',
-  },
-]
-
-const articles = [
-  {
-    title: 'How to Reset Your Password',
-    description: 'Step-by-step guide to reset your account password.',
-    category: 'Account & Access',
-    icon: 'mdi-lock-outline',
-  },
-  {
-    title: 'Connecting to the VPN',
-    description: 'Learn how to connect to the company VPN on different devices.',
-    category: 'IT & Connectivity',
-    icon: 'mdi-laptop',
-  },
-  {
-    title: 'Email Troubleshooting Tips',
-    description: 'Common solutions for email sync and login issues.',
-    category: 'Email & Communication',
-    icon: 'mdi-email-outline',
-  },
-]
-
-const getStatusColor = (status) => {
-  const colors = {
-    Open: 'blue',
-    'In Progress': 'orange',
-    Resolved: 'green',
-    'Pending Response': 'purple',
-  }
-
-  return colors[status] || 'grey'
-}
-
-const getPriorityColor = (priority) => {
-  const colors = {
-    High: 'red',
-    Medium: 'orange',
-    Low: 'green',
-  }
-
-  return colors[priority] || 'grey'
-}
+])
 </script>
 
 <template>
@@ -204,7 +130,7 @@ const getPriorityColor = (priority) => {
       <v-row align="center">
         <v-col cols="12" md="7">
           <h1 class="text-h4 text-md-h3 font-weight-bold text-indigo-darken-4 mb-2">
-            Welcome back, Sarah 👋
+            Welcome back, {{ firstName }} 👋
           </h1>
 
           <p class="text-body-1 text-blue-grey-darken-1 mb-0">
@@ -232,9 +158,7 @@ const getPriorityColor = (priority) => {
         <v-card color="white" elevation="1" class="pa-5 rounded-xl h-100">
           <div class="d-flex align-center ga-4">
             <v-avatar :color="stat.background" size="60" rounded="lg">
-              <v-icon :color="stat.color" size="30">
-                {{ stat.icon }}
-              </v-icon>
+              <v-icon :color="stat.color" :icon="stat.icon" size="30" />
             </v-avatar>
 
             <div>
@@ -243,14 +167,14 @@ const getPriorityColor = (priority) => {
               </p>
 
               <p class="text-h4 font-weight-bold mb-1">
-                {{ stat.value }}
+                {{ ticketStore.loading ? '—' : stat.value }}
               </p>
 
               <div class="d-flex align-center ga-1">
-                <v-icon :color="stat.color" size="small"> mdi-trending-up </v-icon>
+                <v-icon :color="stat.color" icon="mdi-database-outline" size="small" />
 
                 <span class="text-caption" :class="`text-${stat.color}`">
-                  {{ stat.change }}
+                  {{ stat.description }}
                 </span>
               </div>
             </div>
@@ -262,7 +186,7 @@ const getPriorityColor = (priority) => {
     <!-- Tickets and activity -->
     <v-row class="mb-1">
       <!-- Recent tickets -->
-      <v-col cols="12" lg="8">
+      <v-col cols="12" lg="12">
         <v-card color="white" elevation="1" class="rounded-xl h-100 overflow-hidden">
           <div class="d-flex align-center justify-space-between pa-5">
             <h2 class="text-h6 font-weight-bold">Recent Tickets</h2>
@@ -274,166 +198,218 @@ const getPriorityColor = (priority) => {
 
           <v-divider />
 
-          <v-table class="d-none d-md-table">
-            <thead>
-              <tr>
-                <th>Ticket ID</th>
-                <th>Subject</th>
-                <th>Status</th>
-                <th>Priority</th>
-                <th>Assigned To</th>
-                <th>Last Updated</th>
-                <th />
-              </tr>
-            </thead>
+          <v-progress-linear v-if="ticketStore.loading" color="indigo" indeterminate />
 
-            <tbody>
-              <tr v-for="ticket in recentTickets" :key="ticket.id">
-                <td class="font-weight-bold text-indigo">
-                  {{ ticket.id }}
-                </td>
+          <v-alert v-else-if="ticketStore.errorMessage" class="ma-5" color="error" variant="tonal">
+            {{ ticketStore.errorMessage }}
+          </v-alert>
 
-                <td>{{ ticket.subject }}</td>
-
-                <td>
-                  <v-chip :color="getStatusColor(ticket.status)" variant="tonal" size="small">
-                    {{ ticket.status }}
-                  </v-chip>
-                </td>
-
-                <td>
-                  <div class="d-flex align-center ga-2">
-                    <v-icon :color="getPriorityColor(ticket.priority)" size="10">
-                      mdi-circle
-                    </v-icon>
-
-                    <span>{{ ticket.priority }}</span>
-                  </div>
-                </td>
-
-                <td>{{ ticket.assignedTo }}</td>
-
-                <td class="text-caption">
-                  {{ ticket.updatedAt }}
-                </td>
-
-                <td>
-                  <v-btn icon="mdi-arrow-right" variant="text" color="indigo" size="small" />
-                </td>
-              </tr>
-            </tbody>
-          </v-table>
-
-          <!-- Mobile ticket list -->
-          <v-list class="d-md-none py-0">
-            <template v-for="(ticket, index) in recentTickets" :key="ticket.id">
-              <v-list-item class="pa-4">
-                <v-list-item-title class="font-weight-bold mb-1">
-                  {{ ticket.subject }}
-                </v-list-item-title>
-
-                <v-list-item-subtitle class="mb-3">
-                  {{ ticket.id }} · {{ ticket.assignedTo }}
-                </v-list-item-subtitle>
-
-                <div class="d-flex flex-wrap align-center ga-2">
-                  <v-chip :color="getStatusColor(ticket.status)" variant="tonal" size="small">
-                    {{ ticket.status }}
-                  </v-chip>
-
-                  <v-chip :color="getPriorityColor(ticket.priority)" variant="tonal" size="small">
-                    {{ ticket.priority }}
-                  </v-chip>
-                </div>
-
-                <template #append>
-                  <v-icon color="indigo"> mdi-chevron-right </v-icon>
-                </template>
-              </v-list-item>
-
-              <v-divider v-if="index < recentTickets.length - 1" />
-            </template>
-          </v-list>
-        </v-card>
-      </v-col>
-
-      <!-- Recent activity -->
-      <v-col cols="12" lg="4">
-        <v-card color="white" elevation="1" class="rounded-xl h-100">
-          <div class="d-flex align-center justify-space-between pa-5">
-            <h2 class="text-h6 font-weight-bold">Recent Activity</h2>
-
-            <v-btn color="indigo" variant="text" append-icon="mdi-arrow-right" class="text-none">
-              View all
-            </v-btn>
+          <div
+            v-else-if="recentTickets.length === 0"
+            class="pa-8 text-center text-blue-grey-darken-1"
+          >
+            No tickets found.
           </div>
 
-          <v-divider />
+          <template v-else>
+            <v-table class="d-none d-md-table">
+              <thead>
+                <tr>
+                  <th>Ticket ID</th>
+                  <th>Subject</th>
+                  <th>Status</th>
+                  <th>Priority</th>
+                  <th>Department</th>
+                  <th>Last Updated</th>
+                  <th />
+                </tr>
+              </thead>
 
-          <v-list bg-color="transparent" class="py-2">
-            <v-list-item
-              v-for="activity in recentActivities"
-              :key="activity.title"
-              class="px-5 py-3"
-            >
-              <template #prepend>
-                <v-avatar :color="activity.background" size="42" class="me-3">
-                  <v-icon :color="activity.color" size="22">
-                    {{ activity.icon }}
-                  </v-icon>
-                </v-avatar>
+              <tbody>
+                <tr v-for="ticket in recentTickets" :key="ticket.id">
+                  <td class="font-weight-bold text-indigo">
+                    {{ ticket.ticketNumber }}
+                  </td>
+
+                  <td>{{ ticket.subject }}</td>
+
+                  <td>
+                    <v-chip
+                      :color="getStatusColor(ticket.statusLabel)"
+                      variant="tonal"
+                      size="small"
+                    >
+                      {{ ticket.statusLabel }}
+                    </v-chip>
+                  </td>
+
+                  <td>
+                    <div class="d-flex align-center ga-2">
+                      <v-icon :color="getPriorityColor(ticket.priorityLabel)" size="10">
+                        mdi-circle
+                      </v-icon>
+
+                      <span>{{ ticket.priorityLabel }}</span>
+                    </div>
+                  </td>
+
+                  <td>{{ ticket.departmentName || 'Everyone' }}</td>
+
+                  <td class="text-caption">
+                    {{ formatDate(ticket.updatedAt) }}
+                  </td>
+
+                  <td>
+                    <v-btn icon="mdi-arrow-right" variant="text" color="indigo" size="small" />
+                  </td>
+                </tr>
+              </tbody>
+            </v-table>
+
+            <!-- Mobile ticket list -->
+            <v-list class="d-md-none py-0">
+              <template v-for="(ticket, index) in recentTickets" :key="ticket.id">
+                <v-list-item class="pa-4">
+                  <v-list-item-title class="font-weight-bold mb-1">
+                    {{ ticket.subject }}
+                  </v-list-item-title>
+
+                  <v-list-item-subtitle class="mb-3">
+                    {{ ticket.ticketNumber }} · {{ ticket.departmentName || 'Everyone' }}
+                  </v-list-item-subtitle>
+
+                  <div class="d-flex flex-wrap align-center ga-2">
+                    <v-chip
+                      :color="getStatusColor(ticket.statusLabel)"
+                      variant="tonal"
+                      size="small"
+                    >
+                      {{ ticket.statusLabel }}
+                    </v-chip>
+
+                    <v-chip
+                      :color="getPriorityColor(ticket.priorityLabel)"
+                      variant="tonal"
+                      size="small"
+                    >
+                      {{ ticket.priorityLabel }}
+                    </v-chip>
+                  </div>
+
+                  <template #append>
+                    <v-icon color="indigo"> mdi-chevron-right </v-icon>
+                  </template>
+                </v-list-item>
+
+                <v-divider v-if="index < recentTickets.length - 1" />
               </template>
-
-              <v-list-item-title class="text-body-2 font-weight-bold mb-1">
-                {{ activity.title }}
-              </v-list-item-title>
-
-              <v-list-item-subtitle class="text-caption mb-1">
-                {{ activity.description }}
-              </v-list-item-subtitle>
-
-              <p class="text-caption text-blue-grey-lighten-1 mb-0">
-                {{ activity.time }}
-              </p>
-            </v-list-item>
-          </v-list>
+            </v-list>
+          </template>
         </v-card>
       </v-col>
     </v-row>
 
     <!-- Quick actions and announcement -->
+
     <v-row class="mb-1">
       <v-col cols="12" lg="8">
         <v-card color="white" elevation="1" class="pa-5 rounded-xl h-100">
-          <h2 class="text-h6 font-weight-bold mb-4">Quick Actions</h2>
+          <v-col cols="12" lg="8">
+            <v-card class="pa-5 rounded-xl h-100" color="white" elevation="1">
+              <h2 class="text-h6 font-weight-bold mb-4">Quick Actions</h2>
 
-          <v-row>
-            <v-col v-for="action in quickActions" :key="action.title" cols="12" sm="6" xl="3">
-              <v-card variant="outlined" class="pa-4 rounded-lg h-100">
-                <div class="d-flex justify-space-between align-center h-100 ga-3">
-                  <div class="d-flex align-start ga-3">
-                    <v-avatar color="indigo" rounded="lg" size="46">
-                      <v-icon color="white">
-                        {{ action.icon }}
-                      </v-icon>
-                    </v-avatar>
+              <v-row>
+                <!-- Create Ticket -->
+                <v-col cols="12" sm="6" xl="3">
+                  <v-card
+                    :to="{ name: 'create-ticket' }"
+                    class="pa-4 rounded-lg h-100"
+                    color="indigo-lighten-5"
+                    hover
+                    link
+                    variant="outlined"
+                  >
+                    <div class="d-flex align-center ga-3">
+                      <v-avatar color="indigo" rounded="lg" size="46">
+                        <v-icon color="white" icon="mdi-plus" />
+                      </v-avatar>
 
-                    <div>
-                      <p class="text-body-2 font-weight-bold mb-1">
-                        {{ action.title }}
-                      </p>
+                      <div>
+                        <p class="text-body-2 font-weight-bold mb-1">Create a Ticket</p>
 
-                      <p class="text-caption text-blue-grey-darken-1 mb-0">
-                        {{ action.description }}
-                      </p>
+                        <p class="text-caption text-blue-grey-darken-1 mb-0">
+                          Submit a new request or report an issue.
+                        </p>
+                      </div>
                     </div>
-                  </div>
+                  </v-card>
+                </v-col>
 
-                  <v-icon size="small"> mdi-arrow-right </v-icon>
-                </div>
-              </v-card>
-            </v-col>
-          </v-row>
+                <!-- View Tickets -->
+                <v-col cols="12" sm="6" xl="3">
+                  <v-card
+                    class="pa-4 rounded-lg h-100"
+                    hover
+                    link
+                    variant="outlined"
+                    :to="{ name: 'my-tickets' }"
+                  >
+                    <div class="d-flex align-center ga-3">
+                      <v-avatar color="indigo" rounded="lg" size="46">
+                        <v-icon color="white" icon="mdi-file-document-outline" />
+                      </v-avatar>
+
+                      <div>
+                        <p class="text-body-2 font-weight-bold mb-1">View My Tickets</p>
+
+                        <p class="text-caption text-blue-grey-darken-1 mb-0">
+                          View and track all your submitted tickets.
+                        </p>
+                      </div>
+                    </div>
+                  </v-card>
+                </v-col>
+
+                <!-- Upload Attachment -->
+                <v-col cols="12" sm="6" xl="3">
+                  <v-card class="pa-4 rounded-lg h-100" hover link variant="outlined">
+                    <div class="d-flex align-center ga-3">
+                      <v-avatar color="indigo" rounded="lg" size="46">
+                        <v-icon color="white" icon="mdi-paperclip" />
+                      </v-avatar>
+
+                      <div>
+                        <p class="text-body-2 font-weight-bold mb-1">Upload Attachment</p>
+
+                        <p class="text-caption text-blue-grey-darken-1 mb-0">
+                          Upload files to an existing ticket.
+                        </p>
+                      </div>
+                    </div>
+                  </v-card>
+                </v-col>
+
+                <!-- Contact Support -->
+                <v-col cols="12" sm="6" xl="3">
+                  <v-card class="pa-4 rounded-lg h-100" hover link variant="outlined">
+                    <div class="d-flex align-center ga-3">
+                      <v-avatar color="indigo" rounded="lg" size="46">
+                        <v-icon color="white" icon="mdi-headset" />
+                      </v-avatar>
+
+                      <div>
+                        <p class="text-body-2 font-weight-bold mb-1">Contact Support</p>
+
+                        <p class="text-caption text-blue-grey-darken-1 mb-0">
+                          Get help from our support team.
+                        </p>
+                      </div>
+                    </div>
+                  </v-card>
+                </v-col>
+              </v-row>
+            </v-card>
+          </v-col>
         </v-card>
       </v-col>
 

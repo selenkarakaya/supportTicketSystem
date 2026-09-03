@@ -313,24 +313,6 @@ const registerCompany = async () => {
             </v-btn>
           </v-form>
 
-          <div class="d-flex align-center ga-3 mb-5">
-            <v-divider />
-
-            <span class="text-caption text-blue-grey-darken-1"> OR </span>
-
-            <v-divider />
-          </div>
-
-          <v-btn
-            variant="outlined"
-            size="large"
-            block
-            class="text-none mb-6"
-            prepend-icon="mdi-google"
-          >
-            Continue with Google
-          </v-btn>
-
           <p class="text-center text-body-2 text-blue-grey-darken-1 mb-0">
             Already have an account?
 

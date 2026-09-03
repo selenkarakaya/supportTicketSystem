@@ -25,7 +25,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import java.util.UUID;
-
+import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class TicketService {
@@ -136,4 +136,91 @@ public class TicketService {
                                     
         return response;
     }
+
+    @Transactional(readOnly = true)
+public List<TicketResponse> getTickets(String email) {
+
+    User currentUser = userRepository
+        .findByEmail(email)
+        .orElseThrow(() ->
+            new IllegalStateException("Authenticated user not found")
+        );
+
+    Long companyId = currentUser.getCompany().getId();
+    Long userId = currentUser.getId();
+
+    String roleName = currentUser
+        .getRole()
+        .getName()
+        .trim()
+        .toUpperCase(Locale.ROOT);
+
+    List<Ticket> tickets;
+
+    switch (roleName) {
+        case "COMPANY_ADMIN" ->
+            tickets = ticketRepository
+                .findByCompanyIdOrderByCreatedAtDesc(companyId);
+
+        case "SUPPORT_AGENT" -> {
+            Long departmentId = currentUser.getDepartment() != null
+                ? currentUser.getDepartment().getId()
+                : null;
+
+            tickets = ticketRepository
+                .findVisibleTicketsForSupportAgent(
+                    companyId,
+                    userId,
+                    departmentId
+                );
+        }
+
+        case "EMPLOYEE" ->
+            tickets = ticketRepository
+                .findByCompanyIdAndCreatedByUserIdOrderByCreatedAtDesc(
+                    companyId,
+                    userId
+                );
+
+        default -> throw new IllegalStateException(
+            "Unsupported user role: " + roleName
+        );
+    }
+
+    return tickets.stream()
+        .map(this::mapToTicketResponse)
+        .toList();
+}
+
+private TicketResponse mapToTicketResponse(Ticket ticket) {
+
+    Long departmentId = null;
+    String departmentName = null;
+
+    if (ticket.getDepartment() != null) {
+        departmentId = ticket.getDepartment().getId();
+        departmentName = ticket.getDepartment().getName();
+    }
+
+    return TicketResponse.builder()
+        .id(ticket.getId())
+        .ticketNumber(ticket.getTicketNumber())
+        .subject(ticket.getSubject())
+        .description(ticket.getDescription())
+        .statusId(ticket.getStatus().getId())
+        .statusLabel(ticket.getStatus().getLabel())
+        .priorityId(ticket.getPriority().getId())
+        .priorityLabel(ticket.getPriority().getLabel())
+        .categoryId(ticket.getCategory().getId())
+        .categoryLabel(ticket.getCategory().getLabel())
+        .departmentId(departmentId)
+        .departmentName(departmentName)
+        .createdByUserId(ticket.getCreatedByUser().getId())
+        .companyId(ticket.getCompany().getId())
+        .createdAt(ticket.getCreatedAt())
+        .updatedAt(ticket.getUpdatedAt())
+        .resolvedAt(ticket.getResolvedAt())
+        .closedAt(ticket.getClosedAt())
+        .build();
+}
 }

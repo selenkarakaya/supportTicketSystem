@@ -1,5 +1,26 @@
 <script setup>
+import { onMounted, ref } from 'vue'
 import supportDashboard from '@/assets/support-dashboard.png'
+
+const developmentDialog = ref(false)
+
+const demoCredentials = {
+  email: 'northstar@gmail.com',
+  password: 'Northstar2026?',
+}
+
+const closeDevelopmentDialog = () => {
+  sessionStorage.setItem('development-notice-seen', 'true')
+  developmentDialog.value = false
+}
+
+onMounted(() => {
+  const noticeSeen = sessionStorage.getItem('development-notice-seen')
+
+  if (!noticeSeen) {
+    developmentDialog.value = true
+  }
+})
 
 const highlights = [
   {
@@ -134,6 +155,92 @@ const testimonials = [
 </script>
 
 <template>
+  <v-dialog v-model="developmentDialog" max-width="680">
+    <v-card rounded="xl">
+      <v-card-title class="d-flex align-center ga-3 pa-6 pb-3">
+        <v-avatar color="indigo-lighten-5" rounded="lg" size="50">
+          <v-icon color="indigo" icon="mdi-hammer-wrench" size="28" />
+        </v-avatar>
+
+        <div>
+          <div class="d-flex align-center flex-wrap ga-2">
+            <span class="text-h5 font-weight-bold">Development Preview</span>
+
+            <v-chip color="orange" size="small" variant="tonal"> In progress </v-chip>
+          </div>
+
+          <p class="text-body-2 text-blue-grey-darken-1 mb-0">
+            This project is currently under active development.
+          </p>
+        </div>
+      </v-card-title>
+
+      <v-card-text class="px-6 pb-2">
+        <v-alert class="mb-5" color="indigo" icon="mdi-information-outline" variant="tonal">
+          You can sign in and explore the features that are already available. Some pages and
+          actions may still be incomplete.
+        </v-alert>
+
+        <p class="text-subtitle-1 font-weight-bold mb-2">Available now</p>
+
+        <v-list class="pa-0 mb-4" density="compact">
+          <v-list-item prepend-icon="mdi-check-circle-outline">
+            <v-list-item-title>Authentication and secure sign-in</v-list-item-title>
+          </v-list-item>
+
+          <v-list-item prepend-icon="mdi-check-circle-outline">
+            <v-list-item-title>User profile</v-list-item-title>
+          </v-list-item>
+
+          <v-list-item prepend-icon="mdi-check-circle-outline">
+            <v-list-item-title>Create a ticket</v-list-item-title>
+          </v-list-item>
+
+          <v-list-item prepend-icon="mdi-check-circle-outline">
+            <v-list-item-title>Role-based ticket display</v-list-item-title>
+          </v-list-item>
+        </v-list>
+
+        <v-sheet border class="pa-4 mb-4" color="grey-lighten-5" rounded="lg">
+          <div class="d-flex align-center ga-2 mb-3">
+            <v-icon color="indigo" icon="mdi-account-key-outline" />
+            <p class="text-subtitle-1 font-weight-bold mb-0">Demo sign-in</p>
+          </div>
+
+          <div class="text-body-2 mb-2">
+            <span class="font-weight-bold">Email:</span>
+            {{ demoCredentials.email }}
+          </div>
+
+          <div class="text-body-2">
+            <span class="font-weight-bold">Password:</span>
+            {{ demoCredentials.password }}
+          </div>
+        </v-sheet>
+
+        <v-alert color="orange-darken-2" icon="mdi-progress-wrench" variant="tonal">
+          The admin panel and management tools are currently being developed.
+        </v-alert>
+      </v-card-text>
+
+      <v-card-actions class="justify-end pa-6 pt-4">
+        <v-btn color="grey-darken-1" variant="text" @click="closeDevelopmentDialog">
+          Continue browsing
+        </v-btn>
+
+        <v-btn
+          color="indigo"
+          prepend-icon="mdi-login"
+          to="/login"
+          variant="flat"
+          @click="closeDevelopmentDialog"
+        >
+          Sign in to demo
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
   <v-container
     fluid
     class="pa-4 pa-md-6"

@@ -11,7 +11,7 @@ import com.ticketing.support.dto.TicketResponse;
 import com.ticketing.support.service.TicketService;
 import com.ticketing.support.dto.CreateTicketRequest;
 
-
+import java.util.List;
 
 
 
@@ -26,5 +26,16 @@ public class TicketController {
         TicketResponse response =  ticketService.createTicket(request, authentication.getName());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<TicketResponse>> getTickets(
+        Authentication authentication
+    ) {
+        List<TicketResponse> tickets = ticketService.getTickets(
+            authentication.getName()
+        );
+
+        return ResponseEntity.ok(tickets);
     }
 }

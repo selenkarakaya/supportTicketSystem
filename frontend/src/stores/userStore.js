@@ -1,17 +1,15 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
-import { getCompanyUsersRequest } from '@/services/userService'
+import { getCompanyUsersRequest, getUsersByDepartmentRequest } from '@/services/userService'
 
 export const useUserStore = defineStore('user', () => {
-  // Company employees and support agents
   const users = ref([])
+  const departmentUsers = ref([])
 
-  // Request state
   const loading = ref(false)
   const errorMessage = ref('')
 
-  // Get company users
   const getCompanyUsers = async () => {
     loading.value = true
     errorMessage.value = ''
@@ -22,21 +20,41 @@ export const useUserStore = defineStore('user', () => {
 
       if (!response.ok) {
         errorMessage.value = data.message || 'Users could not be loaded.'
-
         users.value = []
-
         return false
       }
 
       users.value = data
-
       return true
     } catch (error) {
-      console.error(error)
-
       errorMessage.value = 'Something went wrong.'
       users.value = []
+      return false
+    } finally {
+      loading.value = false
+    }
+  }
 
+  const getUsersByDepartment = async (departmentId) => {
+    loading.value = true
+    errorMessage.value = ''
+
+    try {
+      const response = await getUsersByDepartmentRequest(departmentId)
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        errorMessage.value = data.message || 'Department users could not be loaded.'
+        departmentUsers.value = []
+        return false
+      }
+
+      departmentUsers.value = data
+      return true
+    } catch (error) {
+      errorMessage.value = 'Something went wrong.'
+      departmentUsers.value = []
       return false
     } finally {
       loading.value = false
@@ -45,8 +63,10 @@ export const useUserStore = defineStore('user', () => {
 
   return {
     users,
+    departmentUsers,
     loading,
     errorMessage,
     getCompanyUsers,
+    getUsersByDepartment,
   }
 })

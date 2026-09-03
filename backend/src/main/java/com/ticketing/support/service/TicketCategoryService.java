@@ -18,7 +18,7 @@ public class TicketCategoryService {
 
     public List<TicketCategoryResponse> getActiveCategories() {
         List<TicketCategory> categories =
-            ticketCategoryRepository.findByIsActiveTrue();
+            ticketCategoryRepository.findAll();
 
         return categories.stream()
             .map(category ->

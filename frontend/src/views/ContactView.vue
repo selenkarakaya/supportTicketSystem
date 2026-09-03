@@ -154,17 +154,6 @@ const submitForm = async () => {
           <v-card-text class="pa-0 text-body-2 text-blue-grey-darken-1 mb-3">
             Find quick answers and helpful guides.
           </v-card-text>
-
-          <v-btn
-            :to="{ name: 'knowledge-base' }"
-            variant="text"
-            color="indigo"
-            size="small"
-            class="text-none"
-            append-icon="mdi-arrow-right"
-          >
-            Browse Articles
-          </v-btn>
         </v-card>
       </v-col>
     </v-row>
@@ -290,16 +279,6 @@ const submitForm = async () => {
             Existing customers can create a ticket to track their request and receive updates from
             the support team.
           </v-card-text>
-
-          <v-btn
-            :to="{ name: 'tickets' }"
-            color="indigo"
-            size="large"
-            class="text-none mb-8"
-            append-icon="mdi-arrow-right"
-          >
-            Create a Ticket
-          </v-btn>
 
           <v-divider class="mb-6" />
 

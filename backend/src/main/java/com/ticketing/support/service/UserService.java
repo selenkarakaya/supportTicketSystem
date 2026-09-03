@@ -56,4 +56,45 @@ public class UserService {
 
         return getUsersByCompany(companyId);
     }
+
+
+    // get users by department
+
+    // Get active users from a specific department
+    public List<UserResponse> getUsersByDepartment(
+        String email,
+        Long departmentId
+    ) {
+
+    User currentUser = userRepository
+            .findByEmail(email)
+            .orElseThrow(() ->
+                    new IllegalArgumentException("User not found.")
+            );
+
+    Long companyId = currentUser
+            .getCompany()
+            .getId();
+
+    List<User> departmentUsers =
+            userRepository
+                    .findByCompanyIdAndDepartmentIdAndIsActiveTrue(
+                            companyId,
+                            departmentId
+                    );
+
+    return departmentUsers.stream()
+            .map(user -> new UserResponse(
+                    user.getId(),
+                    user.getFullName(),
+                    user.getEmail(),
+                    user.getPhone(),
+                    user.getJobTitle(),
+                    user.getRole().getName(),
+                    user.getDepartment().getId(),
+                    user.getDepartment().getName(),
+                    user.isActive()
+            ))
+            .toList();
+    }
 }
